@@ -79,6 +79,7 @@ class Customer {
     }
   }
 
+  /** return customer's full name */
   get fullName() {
     let fullName = `${this.firstName} ${this.lastName}`;
     return fullName;
