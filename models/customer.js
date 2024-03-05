@@ -16,6 +16,16 @@ class Customer {
 
   /** find all customers. */
 
+  static async search(term) {
+    const results = await db.query(
+      `SELECT id, first_name AS "firstName", last_name AS "lastName"
+      FROM customers
+      WHERE first_name ILIKE '%' || $1 || '%'`,
+      [term]
+    );
+    return results.rows.map((c) => new Customer(c));
+  }
+
   static async all() {
     const results = await db.query(
       `SELECT id, 
