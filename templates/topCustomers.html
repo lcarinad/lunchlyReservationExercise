@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {% block title %}Top Customers{% endblock %} {% block
+content %}
+
+<h1>Top Customers</h1>
+
+<ol style="column-count: 4">
+  {% for customer in topTenCustomers %}
+  <li>
+    <a href="/customers/{{ customer.id }}/">{{ customer.fullName}}:</a>
+    {{customer.reservationCount}} reservations
+  </li>
+  {% endfor %}
+</ol>
+
+{% endblock %}

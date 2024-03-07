@@ -55,6 +55,23 @@ class Reservation {
       );
     }
   }
+  /** return top 10 customers with most reservations */
+  static async findTopTen() {
+    const results =
+      await db.query(`SELECT customer_id AS "customerId", COUNT(*) AS "reservationCount"
+    FROM reservations
+    GROUP BY customer_id
+    ORDER BY "reservationCount" DESC
+    LIMIT 10`);
+    if (results.rows.length === 0) {
+      const err = new Error(
+        `There are no reservations right now.  Try again later.`
+      );
+      err.status = 404;
+      throw err;
+    }
+    return results.rows;
+  }
 }
 
 module.exports = Reservation;

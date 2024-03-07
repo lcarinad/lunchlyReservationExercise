@@ -14,8 +14,7 @@ class Customer {
     this.notes = notes;
   }
 
-  /** find all customers. */
-
+  /** search to find a customers. */
   static async search(term) {
     const results = await db.query(
       `SELECT id, first_name AS "firstName", last_name AS "lastName"
@@ -23,9 +22,16 @@ class Customer {
       WHERE first_name ILIKE '%' || $1 || '%'`,
       [term]
     );
+
+    if (results.rows.length === 0) {
+      const err = new Error(`No customers were found.  Search another term.`);
+      err.status = 404;
+      throw err;
+    }
     return results.rows.map((c) => new Customer(c));
   }
 
+  /** find all customers. */
   static async all() {
     const results = await db.query(
       `SELECT id, 
@@ -93,6 +99,20 @@ class Customer {
   get fullName() {
     let fullName = `${this.firstName} ${this.lastName}`;
     return fullName;
+  }
+
+  /** return top 10 customers with most reservations */
+
+  static async getTopTen() {
+    const topCustomersData = await Reservation.findTopTen();
+    let topTenCustomers = [];
+    for (const { customerId, reservationCount } of topCustomersData) {
+      const customer = await Customer.get(customerId);
+      customer.reservationCount = reservationCount;
+      topTenCustomers.push(customer);
+    }
+
+    return topTenCustomers;
   }
 }
 
